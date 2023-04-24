@@ -67,4 +67,4 @@ Packages required to run this project are kept in requirements.txt file which au
 
 
 
-![]([https://github.com/MehreenHabibr/cs5293sp23-project1/blob/main/Recording%20%236.gif](https://github.com/MehreenHabibr/cs5293sp23-project2/blob/main/Project2.gif))
+![]([https://github.com/MehreenHabibr/cs5293sp23-project1/blob/main/Recording%20%236.gif])
