@@ -41,7 +41,7 @@ The "read_file" function reads the contents of a JSON file named "yummly.json" u
    It also creates a dictionary of the redacted named entities and their labels and returns the redacted text, the dictionary, and the count of named entities that were redacted.
 5. `output(pred, pred_cuisine_score, n_closest)`
     This function defines a dictionary object with three key-value pairs: "cuisine", "score", and "closest". It then prints the dictionary in JSON format with an indentation level of 4.
-6.  `main(arser)`
+6.  `main(parser)`
     The main function takes command-line arguments, reads a file, vectorizes its data, predicts the cuisine based on input ingredients, and outputs the result. If the script is run as the main program, it uses argparse to parse the command-line arguments.
  #### Tests
 ---
