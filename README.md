@@ -45,16 +45,11 @@ The "read_file" function reads the contents of a JSON file named "yummly.json" u
     The main function takes command-line arguments, reads a file, vectorizes its data, predicts the cuisine based on input ingredients, and outputs the result. If the script is run as the main program, it uses argparse to parse the command-line arguments.
  #### Tests
 ---
-1. test_redact_names.py :  Test if names are redacted correctly
-2. test_redact_gender.py : Test if genders are redacted correctly
-3. test_redact_address.py : Test if addresses are redacted correctly
-4. test_redact_dates.py : Test if dates are redacted correctly
-5. test_redact_output.py :  Test if the output is written to a file.
-6. test_redact_phones.py : Test if phone numbers are redacted correctly
-7. test_unicode.py : Test if the unicode character is replaced correctly
+1. test_clean_data.py :  The test_clean_data function tests the clean_data function by creating test data, running clean_data on the data, and then asserting that the output is of the expected type and contains the expected values.
+2. test_output.py : This pytest tests the output() function which takes in pred, pred_cuisine_score, and n_closest as arguments and prints them in a JSON-formatted string with an indentation level of 4. It checks whether the function outputs a string and does not raise any errors.
+3. test_predict_cuisine.py : This pytest function tests the predict_cuisine() function by creating a test DataFrame and input data, and checking the output types, predicted cuisine, predicted score, and closest n data.
+4. test_vectorize_form.py : This pytest is specifically testing the vectorize_form function in the p2 module to ensure that it correctly converts the ingredients column in a pandas DataFrame into a list of strings, and that it concatenates the ingredient list with the list of ingredients passed as arguments to the function. The test also ensures that the output includes the correct number of rows and the concatenated ingredients in the correct format
 
-#### Pytests can run using below command
-`pipenv run python -m pytest`
 
 pipenv install
 Packages required to run this project are kept in requirements.txt file which automatically installs during installation of pipenv in step 1.
@@ -64,19 +59,12 @@ Packages required to run this project are kept in requirements.txt file which au
 
 ##### pytest==7.2.2
 
-Once, the packages are successfully installed
-
-#### The project can be executed using
-`pipenv run python redactor.py --input *.txt --names --dates --phones --genders --address --output 'files' --stats stdout`
-
 
 
 ## Assumptions:
 ---
-1. Names of people and organizations are considered as names and thus redacted if --names flag is used.
-2. Accuracy and performance of this application is directly dependent on SpaCy model.
-3. This tools accuracy and performance is enhanced by using regular expressions along with SpaCy but unfortunately not all cases of the entities (names, phones, genders, dates and addresses) were included as regular expressions. Thus, some information may not be redacted if they were not recognized by SpaCy model or included regular expressions.
-4. Address is redacting zip code sometime and sometime it is not.
+1. Assuming that the ingredients provided in the command-line interface (CLI) are present in the yummly.json dataset.
+
 
 
 ![](https://github.com/MehreenHabibr/cs5293sp23-project1/blob/main/Recording%20%236.gif)
