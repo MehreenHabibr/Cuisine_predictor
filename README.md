@@ -64,6 +64,7 @@ Packages required to run this project are kept in requirements.txt file which au
 ## Assumptions:
 ---
 1. Assuming that the ingredients provided in the command-line interface (CLI) are present in the yummly.json dataset.
+2. multiple ingredients like soy souce should be put in "" so that they are considering as single entity.
 
 
 
