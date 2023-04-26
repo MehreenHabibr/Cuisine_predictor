@@ -12,12 +12,12 @@ from sklearn.neighbors import KNeighborsClassifier
 
 
 
+
 def read_file():
     #This line of code defines a function called "read_file" that takes no arguments.
     df = pd.read_json('data/yummly.json')
     #This line of code reads the JSON data from the "yummly.json" file using the "pd.read_json" method and assigns the resulting DataFrame to the "df" variable.
     return df
-
 
 def clean_data(data):
     # convert to lower case
@@ -30,8 +30,6 @@ def clean_data(data):
     data = [d.strip() for d in data]
     return data
 
-
-
 def vectorize_form(df, args):
     # Clean input ingredients
     input_ingredients = clean_data(args.ingredient)
@@ -43,7 +41,6 @@ def vectorize_form(df, args):
     data = ingredients_list + [' '.join(input_ingredients)]
 
     return data
-
 # Define a function that takes a pandas DataFrame, a list of recipe ingredients, and additional parameters as input and returns the predicted cuisine label, predicted cuisine probability score, and information on the closest N recipes based on cosine similarity scores.
 def predict_cuisine(df, data, args):
     # Create an instance of TfidfVectorizer with an ngram range of 1-2 and remove stop words using 'english'.
@@ -65,22 +62,21 @@ def predict_cuisine(df, data, args):
     # Return the predicted cuisine label, predicted cuisine probability score, and information on the closest N recipes based on cosine similarity scores.
     return pred, round(pred_cuisine_score, 3), closest_n_data
 
-
 def output(pred, pred_cuisine_score, n_closest):
-    #This line of code defines a function called "output" that takes in three arguments: "pred", "pred_cuisine_score", and "n_closest".
-    output = {#This line of code initializes a dictionary object called "output".
-        "cuisine": pred[0],#This line of code adds a key-value pair to the "output" dictionary, where the key is "cuisine" and the value is the first element of the "pred" list.
-        "score": round(pred_cuisine_score, 3), #This line of code adds a key-value pair to the "output" dictionary, where the key is "score" and the value is the rounded "pred_cuisine_score" value.
-        "closest": [{"id": tup[0], "score": round(tup[1], 3)} for tup in n_closest]
-    }#This line of code adds a key-value pair to the "output" dictionary, where the key is "closest" and the value is a list comprehension that creates a list of dictionaries. Each dictionary in the list contains an "id" key and a "score" key, where the "id" key corresponds to the first element of a tuple in the "n_closest" list, and the "score" key corresponds to the rounded second element of the same tuple.
+    # Convert any int64 type objects to int type
+    n_closest = [(int(id_), score) for id_, score in n_closest]
+    # Construct the JSON object
+    output = {'cuisine': pred.tolist()[0],
+              'score': float(pred_cuisine_score),
+              'closest': [{'id': id_, 'score': score} for id_, score in n_closest]}
     print(json.dumps(output, indent=4))
-    #This line of code prints the "output" dictionary object in a JSON-formatted string with an indentation level of 4.
-
 
 
 def main(parser):
     args = parser.parse_args()
     df = read_file()
+    cleaned_data = clean_data(df)
+  #  corpus = cleaned_data(df, args)
     corpus = vectorize_form(df, args)
     pred, pred_cuisine_score, n_closest = predict_cuisine(df, corpus, args)
     output(pred, pred_cuisine_score, n_closest)
@@ -90,5 +86,6 @@ if __name__ == "__main__":
     parser.add_argument("--N", type=int, help='Number of neighbors')
     parser.add_argument("--ingredient", type=str, action='append', required=True, help="List of ingredients")
     main(parser)
+
 
  
