@@ -62,11 +62,12 @@ def predict_cuisine(df, data, args):
     # Return the predicted cuisine label, predicted cuisine probability score, and information on the closest N recipes based on cosine similarity scores.
     return pred, round(pred_cuisine_score, 3), closest_n_data
 
+
 def output(pred, pred_cuisine_score, n_closest):
     # Convert any int64 type objects to int type
     n_closest = [(int(id_), score) for id_, score in n_closest]
     # Construct the JSON object
-    output = {'cuisine': pred.tolist()[0],
+    output = {'cuisine': pred[0],
               'score': float(pred_cuisine_score),
               'closest': [{'id': id_, 'score': score} for id_, score in n_closest]}
     print(json.dumps(output, indent=4))
