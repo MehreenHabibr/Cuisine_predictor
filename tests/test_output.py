@@ -5,17 +5,11 @@ import project2 as p2
 import pandas as pd
 import argparse
 #from argparse import Namespace
-
 from argparse import Namespace
-import os
-import os
 import pandas as pd
 import project2
 from project2 import *
 import os
-import pandas as pd
-import project2 as p2
-
 import json
 
 
