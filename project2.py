@@ -14,14 +14,9 @@ from sklearn.neighbors import KNeighborsClassifier
 
 def read_file():
     #This line of code defines a function called "read_file" that takes no arguments.
-    with open('data/yummly.json', 'r') as file:
-    #This line of code opens the "yummly.json" file in read mode using a context manager and assigns the resulting file object to the "file" variable.
-        data = json.load(file)
-    #This line of code reads the contents of the "file" object using the "json.load" method and assigns the resulting JSON data to the "data" variable.
-    df = pd.DataFrame(data)
-    #This line of code creates a Pandas DataFrame from the "data" dictionary object and assigns it to the "df" variable.
+    df = pd.read_json('data/yummly.json')
+    #This line of code reads the JSON data from the "yummly.json" file using the "pd.read_json" method and assigns the resulting DataFrame to the "df" variable.
     return df
-    #This line of code returns the "df" DataFrame from the function.
 
 
 def clean_data(data):
@@ -36,51 +31,40 @@ def clean_data(data):
     return data
 
 
+
 def vectorize_form(df, args):
-    #This line of code defines a function called "vectorize_form" that takes in two arguments: "df" and "args".
+    # Clean input ingredients
     input_ingredients = clean_data(args.ingredient)
-    #This line of code calls the "clean_data" function on the "args.ingredient" input and assigns the resulting cleaned data to the "input_ingredients" variable.
-    ingredients_list = df['ingredients']
-    #This line of code retrieves the "ingredients" column from the "df" DataFrame and assigns it to the "ingredients_list" variable.
-    data = list(map(' '.join, ingredients_list))
-    #This line of code uses the "map" function to join each list of ingredients in "ingredients_list" with a space separator and returns a list of strings. The resulting list is assigned to the "data" variable.
-    data = clean_data(data)
-    #This line of code calls the "clean_data" function on the "data" list of strings and assigns the resulting cleaned data to the "data" variable.
-    data.append(' '.join(input_ingredients))
-    #This line of code appends a string to the end of the "data" list that consists of the cleaned input ingredients joined with a space separator.
+
+    # Clean and join all ingredients in DataFrame
+    ingredients_list = [' '.join(clean_data(ingredients)) for ingredients in df['ingredients']]
+
+    # Append input ingredients to the list of ingredients
+    data = ingredients_list + [' '.join(input_ingredients)]
+
     return data
-   #This line of code returns the "data" list from the function.
 
+# Define a function that takes a pandas DataFrame, a list of recipe ingredients, and additional parameters as input and returns the predicted cuisine label, predicted cuisine probability score, and information on the closest N recipes based on cosine similarity scores.
 def predict_cuisine(df, data, args):
-    n = args.N
-    labels = df['cuisine']
-    ids = df['id'].tolist()
-    n_closest = []
+    # Create an instance of TfidfVectorizer with an ngram range of 1-2 and remove stop words using 'english'.
     tfidf_vectorizer = TfidfVectorizer(ngram_range=(1, 2), stop_words='english')
-    #This line of code initializes a TfidfVectorizer object with a specified ngram range of 1 to 2 and with English stop words.
-    ingredient_features = tfidf_vectorizer.fit(data[:-1]).transform(data[:-1])
-    #This line of code fits the TfidfVectorizer object to the "data" list except for the last element (i.e., data[:-1]) and then transforms it into a matrix of TfidfVectorizer features. The resulting matrix is assigned to a variable called "ingredient_features".
+    # Transform the list of ingredients (excluding the last item) into a sparse matrix of TF-IDF features.
+    ingredient_features = tfidf_vectorizer.fit_transform(data[:-1])
+    # Transform the last item in the list of ingredients into a sparse matrix of TF-IDF features.
     input_ = tfidf_vectorizer.transform([data[-1]])
-    #This line of code transforms the last element of the "data" list (i.e., data[-1]) into a TfidfVectorizer feature matrix. The resulting matrix is assigned to a variable called "input_".
-    classifier = KNeighborsClassifier(n_neighbors=args.N)
-   # This line of code initializes a KNeighborsClassifier object with a specified number of neighbors (i.e., "args.N") and assigns it to a variable called "classifier".
-    classifier.fit(ingredient_features, labels)
-    #This line of code fits the KNeighborsClassifier object to the "ingredient_features" matrix and the "labels" vector, which represent the feature matrix and the corresponding cuisine labels, respectively.
+    # Create an instance of KNeighborsClassifier with args.N neighbors and fit it to the ingredient_features sparse matrix and corresponding cuisine labels in the DataFrame df.
+    classifier = KNeighborsClassifier(n_neighbors=args.N).fit(ingredient_features, df['cuisine'])
+    # Predict the cuisine label of the recipe based on the input_ sparse matrix of features.
     pred = classifier.predict(input_)
-    #This line of code uses the trained KNeighborsClassifier object to predict the cuisine label of the input feature matrix (i.e., "input_"). The predicted label is assigned to a variable called "pred".
-    pred_cuisine_score = classifier.predict_proba(input_)[0].max()
-    #This line of code calculates the maximum predicted probability score for the predicted cuisine label (i.e., "pred") and assigns it to a variable called "pred_cuisine_score".
-    scores = cosine_similarity(input_, ingredient_features, dense_output=False).toarray().ravel()
-    #This line of code calculates the cosine similarity scores between the input feature matrix (i.e., "input_") and the "ingredient_features" matrix. The resulting scores are flattened into a one-dimensional array and assigned to a variable called "scores".
-    sort_scores = np.argsort(scores)[::-1]
-   # This line of code sorts the cosine similarity scores in descending order and returns their corresponding indices. The resulting indices are assigned to a variable called "sort_scores".
-    closest_n_indices = sort_scores[:n]
-    #This line of code selects the top "n" indices with the highest cosine similarity scores and assigns them to a variable called "closest_n_indices".
-    closest_n_data = [(ids[i], round(scores[i], 3)) for i in closest_n_indices]
-    #This line of code creates a list of tuples, where each tuple contains the "id" value and the cosine similarity score for a selected index in the "closest_n_indices" list. The resulting list of tuples is assigned to a variable called "closest_n_data".
-
+    # Calculate the maximum predicted probability of the predicted cuisine label.
+    pred_cuisine_score = np.max(classifier.predict_proba(input_))
+    # Calculate the cosine similarity between the input_ sparse matrix of features and the ingredient_features sparse matrix of features and flatten the resulting array.
+    scores = cosine_similarity(input_, ingredient_features).ravel()
+    # Create a list of the args.N closest recipes based on cosine similarity scores. For each of the closest recipes, return the corresponding id from the DataFrame df and the cosine similarity score rounded to 3 decimal places.
+    closest_n_data = [(df['id'][i], round(scores[i], 3)) for i in np.argsort(scores)[::-1][:args.N]]
+    # Return the predicted cuisine label, predicted cuisine probability score, and information on the closest N recipes based on cosine similarity scores.
     return pred, round(pred_cuisine_score, 3), closest_n_data
-#This line of code returns three values: the predicted cuisine label (i.e., "pred"), the maximum predicted probability score (i.e., "pred_cuisine_score"), and the list of closest "n" cuisine IDs and their corresponding cosine similarity scores (i.e., "closest_n_data").
+
 
 def output(pred, pred_cuisine_score, n_closest):
     #This line of code defines a function called "output" that takes in three arguments: "pred", "pred_cuisine_score", and "n_closest".
