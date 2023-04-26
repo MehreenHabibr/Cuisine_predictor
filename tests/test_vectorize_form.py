@@ -1,25 +1,15 @@
 import pandas as pd
 import pytest
-import pytest
 from argparse import Namespace
 import json
 import pandas as pd
 import sys
 sys.path.append('..')
-import pytest
-
-import pandas as pd
 import argparse
-#from argparse import Namespace
-
-from argparse import Namespace
 import os
-import pandas as pd
 import project2
 from project2 import *
-import os
-import pandas as pd
-import project2 as p2
+
 
 @pytest.fixture
 
