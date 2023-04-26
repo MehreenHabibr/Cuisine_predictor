@@ -5,16 +5,11 @@ import project2 as p2
 import pandas as pd
 import argparse
 #from argparse import Namespace
-
 from argparse import Namespace
-import os
-import os
-import pandas as pd
 import project2 
 from project2 import *
 import os
-import pandas as pd
-import project2 as p2
+
 def test_clean_data():
     # create test data
     data = ['Chicken! Noodles.', '123  Main Street', '   garlic     ']
