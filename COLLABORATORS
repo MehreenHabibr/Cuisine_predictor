@@ -1,2 +1,6 @@
 scikit-learn, https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html, Helped me with Vectorizer
 scikit-learn, https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html, Helped me with classifier
+Medium | https://medium.com/nerd-for-tech/predicting-food-cuisine-using-natural-language-processing-and-machine-learning-in-python-a00c859a8ac7 | Classification
+StackOverflow | https://stackoverflow.com/questions/50916422/python-typeerror-object-of-type-int64-is-not-json-serializable | Used for displaying the output
+pytest | https://docs.pytest.org/en/6.2.x/parametrize.html | helped me for pytest
+stackoverflow, https://stackoverflow.com/questions/62427205/in-python-3-using-pytest-how-do-we-test-for-exit-code-exit1-and-exit0-fo, helped me in pytest
