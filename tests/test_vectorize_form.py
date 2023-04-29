@@ -7,7 +7,7 @@ import sys
 sys.path.append('..')
 import argparse
 import os
-import project2
+import project2 as p2
 from project2 import *
 
 
