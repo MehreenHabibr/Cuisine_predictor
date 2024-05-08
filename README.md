@@ -1,6 +1,5 @@
 **MEHREEN HABIB**
 ---------
-> ## Project Title: CS5293, spring 2023 Project 2
 ### Project Description
  **This project aims to predict the type of cuisine based on a list of ingredients entered through the command line interface (CLI). Additionally, it will provide a predicted score for the given cuisine and a list of the top "n" cuisines that are most similar to the input ingredients.**
  
